@@ -52,8 +52,8 @@ if os.path.exists("Resume.zip"):
     with zipfile.ZipFile("Resume.zip", "r") as zip_ref:
         zip_ref.extractall(".")
 
-# 📂 Load data
-jobs = pd.read_csv("Jjob_descriptions.CSV")[["uniq_id","job_title","job_description","sector","location","organization"]]
+# 📂 Load data (fixed filename!)
+jobs = pd.read_csv("job_descriptions.csv")[["uniq_id","job_title","job_description","sector","location","organization"]]
 resumes = pd.read_csv("Resume.csv")[["ID","Resume_str","Category"]]
 
 # 🧠 TF-IDF setup
