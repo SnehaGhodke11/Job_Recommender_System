@@ -2,11 +2,13 @@ import pandas as pd
 import streamlit as st
 import joblib
 import os
+import zipfile
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 st.set_page_config(page_title="💼 Job Recommender", layout="wide")
 
+# 🎨 Background styling
 page_bg = """
 <style>
 [data-testid="stAppViewContainer"] {
@@ -42,23 +44,32 @@ h1, h2, h3, h4, h5, h6, p, label {
 st.markdown(page_bg, unsafe_allow_html=True)
 st.title("💼 Job Recommendation System")
 
-jobs = pd.read_csv("job_descriptions.csv")[["uniq_id","job_title","job_description","sector","location","organization"]]
-resumes = pd.read_csv("Resume.csv")[["ID","Resume_str","Category"]]
+# ✅ Unzip datasets if zipped
+if os.path.exists("Job_Descriptions.CSV.zip"):
+    with zipfile.ZipFile("Job_Descriptions.CSV.zip", "r") as zip_ref:
+        zip_ref.extractall(".")
+if os.path.exists("Rsume.csv.zip"):
+    with zipfile.ZipFile("Rsume.csv.zip", "r") as zip_ref:
+        zip_ref.extractall(".")
 
+# 📂 Load data
+jobs = pd.read_csv("Job_Descriptions.CSV")[["uniq_id","job_title","job_description","sector","location","organization"]]
+resumes = pd.read_csv("Rsume.csv")[["ID","Resume_str","Category"]]
+
+# 🧠 TF-IDF setup
 combined_text = pd.concat([jobs["job_description"], resumes["Resume_str"]])
 vectorizer = TfidfVectorizer(stop_words="english")
 vectorizer.fit(combined_text)
 
+# 🛠 Generate Similarities button
 if st.button("🛠 Generate Similarities"):
-
     resume_vecs = vectorizer.transform(resumes["Resume_str"])
     job_vecs = vectorizer.transform(jobs["job_description"])
     similarity_matrix = cosine_similarity(resume_vecs, job_vecs)
-
     joblib.dump(similarity_matrix, "similarity.joblib")
     st.success("✅ Similarity matrix generated and saved as similarity.joblib")
 
-
+# ✅ Load or compute similarity matrix
 if os.path.exists("similarity.joblib"):
     similarity_matrix = joblib.load("similarity.joblib")
 else:
@@ -66,6 +77,7 @@ else:
                                           vectorizer.transform(jobs["job_description"]))
     joblib.dump(similarity_matrix, "similarity.joblib")
 
+# 🔎 Recommendation function
 def recommend_jobs(resume_index, top_n=5):
     scores = list(enumerate(similarity_matrix[resume_index]))
     ranked = sorted(scores, key=lambda x: x[1], reverse=True)[:top_n]
@@ -80,6 +92,7 @@ def recommend_jobs(resume_index, top_n=5):
         })
     return pd.DataFrame(results)
 
+# 📌 Sidebar
 st.sidebar.header("📌 Options")
 choice = st.sidebar.radio("Navigate", ["📘 Learn Skills", "🏢 Company View", "🔗 Related Jobs", "📊 Resume Insights"])
 
