@@ -53,8 +53,8 @@ if os.path.exists("Resume.zip"):
         zip_ref.extractall(".")
 
 # 📂 Load data
-jobs = pd.read_csv("Job_Descriptions.CSV")[["uniq_id","job_title","job_description","sector","location","organization"]]
-resumes = pd.read_csv("Rsume.csv")[["ID","Resume_str","Category"]]
+jobs = pd.read_csv("Jjob_descriptions.CSV")[["uniq_id","job_title","job_description","sector","location","organization"]]
+resumes = pd.read_csv("Resume.csv")[["ID","Resume_str","Category"]]
 
 # 🧠 TF-IDF setup
 combined_text = pd.concat([jobs["job_description"], resumes["Resume_str"]])
