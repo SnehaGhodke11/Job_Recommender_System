@@ -45,11 +45,11 @@ st.markdown(page_bg, unsafe_allow_html=True)
 st.title("💼 Job Recommendation System")
 
 # ✅ Unzip datasets if zipped
-if os.path.exists("Job_Descriptions.CSV.zip"):
-    with zipfile.ZipFile("Job_Descriptions.CSV.zip", "r") as zip_ref:
+if os.path.exists("job_descriptions.zip"):
+    with zipfile.ZipFile("job_descriptions.zip", "r") as zip_ref:
         zip_ref.extractall(".")
-if os.path.exists("Rsume.csv.zip"):
-    with zipfile.ZipFile("Rsume.csv.zip", "r") as zip_ref:
+if os.path.exists("Resume.zip"):
+    with zipfile.ZipFile("Resume.zip", "r") as zip_ref:
         zip_ref.extractall(".")
 
 # 📂 Load data
